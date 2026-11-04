@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ERM Knowledge Hub Demo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+:root{
+  --navy:#0c2b55; --navy2:#16407a; --green:#6ab23e; --greenD:#3d8a1c; --greenL:#eef7e8;
+  --teal:#0f8590; --purple:#6b4fa0; --orange:#e2700f; --amber:#b86e00; --amberL:#fff4e0;
+  --red:#c4314b; --bg:#f3f6f9; --card:#fff; --ink:#1b2733; --muted:#5a6a7a; --line:#dde4eb; --sky:#e7f1fb;
+  --r:10px; --shadow:0 1px 2px rgba(12,43,85,.06),0 2px 8px rgba(12,43,85,.06);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+a{color:var(--navy2);text-decoration:none}
+a:hover{text-decoration:underline}
+button{font:inherit;cursor:pointer}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.wrap{max-width:1320px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+
+/* Header */
+.top{background:var(--navy);color:#fff}
+.top .wrap{display:flex;align-items:center;gap:20px;min-height:68px;flex-wrap:wrap;padding-top:8px;padding-bottom:8px}
+.logo{display:flex;align-items:center;gap:12px;color:#fff}
+.logo b{font-size:30px;letter-spacing:.5px;font-weight:800}
+.logo b i{font-style:normal;color:var(--green)}
+.logo small{font-size:11px;line-height:1.25;letter-spacing:.6px;font-weight:600;opacity:.9;text-transform:uppercase}
+.sitetitle{flex:1;text-align:center;min-width:220px}
+.sitetitle h1{margin:0;font-size:24px;letter-spacing:.5px;font-weight:700}
+.sitetitle div{color:#9fd77a;font-weight:600;font-size:16px}
+.topact{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.topact button,.topact a{background:transparent;border:1px solid transparent;color:#fff;display:flex;gap:7px;align-items:center;padding:7px 10px;border-radius:6px;font-size:14px}
+.topact button:hover,.topact a:hover{background:rgba(255,255,255,.1);text-decoration:none}
+.topact .toggle{border-color:rgba(255,255,255,.35)}
+.topact .toggle[aria-pressed=true]{background:var(--orange);border-color:var(--orange)}
+.nav{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:#fff}
+:root{color-scheme:light}
+.nav .wrap{display:flex;overflow-x:auto;scrollbar-width:none}
+.nav a{white-space:nowrap;padding:14px 16px 12px;color:var(--ink);border-bottom:3px solid transparent;font-size:14px;display:flex;align-items:center}
+.nav a:hover{text-decoration:none;background:#f6f9fb}
+.nav a.on{border-color:var(--green);color:var(--navy);font-weight:600}
+
+/* Interim banner */
+.interim{background:var(--greenL);border-bottom:1px solid #d3e9c5}
+.interim .wrap{display:flex;gap:14px;align-items:center;padding-top:10px;padding-bottom:10px}
+.interim .dot{width:30px;height:30px;border-radius:50%;background:var(--greenD);color:#fff;display:grid;place-items:center;flex:none}
+.interim p{margin:0;font-size:13.5px}
+.interim .yr{margin-left:auto;text-align:right;font-weight:700;color:var(--navy);font-size:13px;white-space:nowrap;border-left:1px solid #cfe3c0;padding-left:14px}
+
+main{padding:22px 0 10px}
+.crumb{font-size:13px;color:var(--muted);margin:0 0 6px}
+.ph{margin:0 0 18px}
+.ph h2{margin:0;font-size:28px;color:var(--navy)}
+.ph p{margin:4px 0 0;color:var(--muted);max-width:780px}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:18px}
+.card h3{margin:0 0 12px;font-size:15px;letter-spacing:.4px;text-transform:uppercase;color:var(--navy);display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.card h3 a{font-size:12px;text-transform:none;letter-spacing:0;font-weight:500}
+.grid{display:grid;gap:16px}
+.grid > *{min-width:0}
+.card h3 a{white-space:nowrap}
+.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(270px,1fr))}
+.g5{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.mt{margin-top:18px}
+.muted{color:var(--muted)}
+.sm{font-size:13px}
+
+/* Hero */
+.hero{background:linear-gradient(180deg,#eaf3fc,#f5f9fd);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:grid;grid-template-columns:1.05fr 1fr .8fr;align-items:stretch}
+.hero .txt{padding:30px 28px}
+.hero h2{margin:0 0 8px;font-size:30px;color:var(--navy);line-height:1.15}
+.hero p{margin:0 0 18px;color:#33475b;font-size:16px}
+.searchbox{display:flex;align-items:center;background:#fff;border:1px solid #b9c7d4;border-radius:30px;padding:4px 6px 4px 18px;max-width:440px}
+.searchbox input{border:0;outline:0;flex:1;font:inherit;padding:8px 0;min-width:0;background:transparent}
+.searchbox button{border:0;background:var(--navy);color:#fff;border-radius:50%;width:36px;height:36px;display:grid;place-items:center}
+.hero .art{min-height:200px;position:relative}
+.hero .art svg{position:absolute;inset:0;width:100%;height:100%}
+.hero .pillars{padding:24px 24px 20px}
+.hero .pillars h4{margin:0;font-size:20px;color:var(--navy);letter-spacing:.3px}
+.hero .pillars p{font-size:14.5px;margin:4px 0 12px}
+.hero .pillars li{display:flex;gap:10px;align-items:center;font-size:14px;margin:6px 0;color:#24394f}
+.hero .pillars ul{list-style:none;margin:0;padding:0}
+.hero .pillars .ic{color:var(--navy2)}
+
+/* Quick access */
+.qa{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.tile{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px;color:var(--ink);box-shadow:var(--shadow);transition:transform .12s,box-shadow .12s}
+.tile:hover{text-decoration:none;transform:translateY(-2px);box-shadow:0 6px 18px rgba(12,43,85,.12)}
+.tile .hd{display:flex;gap:12px;align-items:center}
+.tile .sq{width:54px;height:54px;border-radius:10px;display:grid;place-items:center;color:#fff;flex:none}
+.tile .sq .ic{width:30px;height:30px}
+.tile b{font-size:16.5px;line-height:1.22;color:var(--navy)}
+.tile span{font-size:13px;color:var(--muted);flex:1}
+.tile .go{align-self:flex-end;color:var(--navy)}
+
+/* lists inside cards */
+.li{display:flex;gap:12px;padding:9px 0;border-bottom:1px solid #eef2f6;align-items:flex-start}
+.li:last-child{border-bottom:0}
+.li .ic{color:var(--greenD);margin-top:2px}
+.li b{display:block;font-size:14px;color:var(--navy)}
+.li small{color:var(--muted);font-size:12.5px;display:block}
+.date{border:1.5px solid var(--greenD);border-radius:6px;width:46px;text-align:center;flex:none;line-height:1.05;padding:4px 0;color:var(--navy)}
+.date b{font-size:19px;color:var(--navy)}
+.date small{font-size:10.5px;text-transform:uppercase;font-weight:700;color:var(--greenD)}
+
+.values{background:#fff;border-top:1px solid var(--line);margin-top:26px}
+.values .wrap{display:grid;grid-template-columns:1fr 1fr 1.4fr 1fr 1fr;gap:16px;align-items:center;padding-top:16px;padding-bottom:16px}
+.values .v{display:flex;gap:12px;align-items:center;font-size:13px;color:#33475b}
+.values .v .ic{width:34px;height:34px;color:var(--navy2);stroke-width:1.4}
+.values .mid{text-align:center;font-weight:800;letter-spacing:.4px;color:var(--navy);font-size:15px}
+.values .mid div{color:var(--greenD)}
+.foot{background:var(--navy);color:#c9d6e6;font-size:12.5px}
+.foot .wrap{display:flex;gap:18px;flex-wrap:wrap;justify-content:space-between;padding-top:12px;padding-bottom:12px}
+.foot a{color:#fff}
+
+/* chips, buttons, tables */
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:2px 9px;border-radius:20px;white-space:nowrap}
+.st-wg{background:var(--amberL);color:var(--amber);border:1px solid #f2d6a6}
+.st-ap{background:#e5f4e0;color:#2b7a12;border:1px solid #c3e2b5}
+.st-sp{background:#eceff2;color:#68737d;border:1px solid #d5dbe0;text-decoration:line-through}
+.btn{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--navy);background:var(--navy);color:#fff;padding:8px 16px;border-radius:6px;font-size:14px;font-weight:600}
+.btn:hover{text-decoration:none;background:var(--navy2)}
+.btn.ghost{background:#fff;color:var(--navy)}
+.btn.green{background:var(--greenD);border-color:var(--greenD)}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.pill{border:1px solid var(--line);background:#fff;border-radius:20px;padding:5px 13px;font-size:13px;color:var(--ink)}
+.pill.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);padding:9px 10px;border-bottom:2px solid var(--line);white-space:nowrap}
+.tbl td{padding:10px;border-bottom:1px solid #edf1f5;vertical-align:top}
+.tbl tr:hover td{background:#f8fafc}
+.scroll{overflow-x:auto}
+.ext{display:inline-grid;place-items:center;width:34px;height:22px;border-radius:4px;font-size:10px;font-weight:700;color:#fff;margin-right:8px;vertical-align:middle}
+.x-xlsx{background:#1d7044}.x-docx{background:#2b579a}.x-pdf{background:#c4314b}.x-pptx{background:#c43e1c}.x-mp4{background:#6b4fa0}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.field label{font-size:13px;font-weight:600}
+.field input,.field select,.field textarea{font:inherit;border:1px solid #b9c7d4;border-radius:6px;padding:8px 10px;background:#fff;width:100%}
+.field textarea{min-height:80px;resize:vertical}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.toolbar .searchbox{max-width:300px;padding:2px 4px 2px 14px}
+.toolbar .searchbox button{width:30px;height:30px}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:0;counter-reset:s}
+.step{position:relative;padding:16px 18px 16px 22px;background:#fff;border:1px solid var(--line);margin-right:-1px}
+.step:first-child{border-radius:var(--r) 0 0 var(--r)}
+.step:last-child{border-radius:0 var(--r) var(--r) 0}
+.step .n{width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:700;margin-bottom:8px}
+.step b{display:block;color:var(--navy)}
+.step p{margin:4px 0 0;font-size:13px;color:var(--muted)}
+.ex{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.ex > div{border-radius:8px;padding:12px 14px;font-size:14px}
+.ex .poor{background:#fdeef0;border-left:4px solid var(--red)}
+.ex .good{background:#ecf7e6;border-left:4px solid var(--greenD)}
+.ex small{display:block;font-weight:700;font-size:11px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px}
+.ex .why{grid-column:1/-1;font-size:13px;color:var(--muted);padding:0 2px}
+.check{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #eef2f6;align-items:flex-start;font-size:14px}
+.check input{width:18px;height:18px;margin-top:2px;accent-color:var(--greenD);flex:none}
+.bar{height:10px;background:#e6ecf2;border-radius:10px;overflow:hidden;margin:6px 0 4px}
+.bar i{display:block;height:100%;background:var(--greenD);width:0;transition:width .25s}
+.stmt{background:var(--sky);border:1px dashed #9cc0e4;border-radius:8px;padding:12px 14px;font-size:15px;min-height:52px}
+.stmt em{font-style:normal;font-weight:600;color:var(--navy2)}
+details.faq{border:1px solid var(--line);border-radius:8px;background:#fff;margin-bottom:8px}
+details.faq summary{padding:12px 16px;cursor:pointer;font-weight:600;color:var(--navy);list-style:none;display:flex;justify-content:space-between;gap:10px}
+details.faq summary::after{content:"+";font-size:20px;line-height:1;color:var(--muted)}
+details.faq[open] summary::after{content:"–"}
+details.faq div{padding:0 16px 14px;font-size:14px;color:#33475b}
+.kpi{border-left:4px solid var(--navy2)}
+.kpi .big{font-size:30px;font-weight:700;color:var(--navy)}
+.kpi .big small{font-size:14px;color:var(--muted);font-weight:500}
+.tl{position:relative;padding-left:22px}
+.tl:before{content:"";position:absolute;left:7px;top:4px;bottom:4px;width:2px;background:var(--line)}
+.tl > div{position:relative;margin-bottom:14px}
+.tl > div:before{content:"";position:absolute;left:-20px;top:5px;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid var(--navy2)}
+.tl > div.now:before{background:var(--green);border-color:var(--greenD)}
+.callout{display:flex;gap:14px;align-items:center;background:var(--navy);color:#fff;border-radius:var(--r);padding:18px 20px;flex-wrap:wrap}
+.callout p{margin:0;flex:1;min-width:220px}
+.callout .btn{background:var(--green);border-color:var(--green)}
+.fb{margin-top:24px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:14px;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:12px 16px}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 18px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.25);font-size:14px;z-index:50;display:none}
+.wheel text{font-weight:800}
+.dept{display:flex;gap:10px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.av{width:38px;height:38px;border-radius:50%;background:#dfe8f1;color:var(--navy);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+
+/* Build-notes overlay */
+.wp{position:relative}
+body.build .wp{outline:2px dashed var(--orange);outline-offset:3px}
+body.build .wp::before{content:attr(data-wp);position:absolute;z-index:5;top:-12px;left:10px;background:var(--orange);color:#fff;font-size:11.5px;font-weight:600;padding:2px 9px;border-radius:4px;max-width:calc(100% - 20px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.build .wp.custom{outline-color:var(--purple)}
+body.build .wp.custom::before{background:var(--purple)}
+.buildkey{display:none}
+body.build .buildkey{display:block;background:#fff6ec;border-bottom:1px solid #f3d3b0;font-size:13px}
+body.build .buildkey .wrap{padding-top:8px;padding-bottom:8px}
+.k{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:-1px;margin:0 4px 0 10px}
+
+@media (max-width:1150px){
+  .qa{grid-template-columns:repeat(3,1fr)}
+  .hero{grid-template-columns:1fr 1fr}
+  .hero .pillars{grid-column:1/-1;border-top:1px solid var(--line)}
+  .steps{grid-template-columns:1fr}
+  .step,.step:first-child,.step:last-child{border-radius:0;margin:0 0 -1px}
+  .values .wrap{grid-template-columns:1fr 1fr}
+  .values .mid{grid-column:1/-1;order:-1}
+}
+@media (max-width:700px){
+  .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .sitetitle{text-align:left;order:3;flex-basis:100%}
+  .sitetitle h1{font-size:20px}
+  .topact span.lbl{display:none}
+  .hero{grid-template-columns:1fr}
+  .hero .art{min-height:150px}
+  .hero h2{font-size:24px}
+  .qa{grid-template-columns:1fr 1fr}
+  .tile .sq{width:42px;height:42px}
+  .tile b{font-size:14.5px}
+  .ex{grid-template-columns:1fr}
+  .interim .yr{display:none}
+  .ph h2{font-size:23px}
+  .g2,.g3,.g5{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#home" aria-label="Home"><b>ERM<i>.</i></b><small>Demo prototype<br>Sample content</small></a>
+    <div class="sitetitle"><h1>ERM KNOWLEDGE HUB</h1><div>Interim Working Guidance</div></div>
+    <div class="topact">
+      <a href="#search"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><span class="lbl">Search</span></a>
+      <a href="#escalation"><svg class="ic" viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1"/><rect x="17" y="14" width="4" height="6" rx="1"/></svg><span class="lbl">Contact ERM Team</span></a>
+      <button class="toggle" id="buildBtn" aria-pressed="false" title="Show which SharePoint web part builds each section"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span class="lbl">Build notes</span></button>
+    </div>
+  </div>
+</header>
+<nav class="nav" aria-label="Hub navigation"><div class="wrap" id="nav"></div></nav>
+<div class="buildkey"><div class="wrap"><b>Build notes on.</b> Each outlined block names the SharePoint web part and data source that builds it. <span class="k" style="background:var(--orange)"></span>Out-of-the-box SharePoint <span class="k" style="background:var(--purple)"></span>Needs Power Apps / Forms, or replace with a static version</div></div>
+<div class="interim wp" data-wp="Text web part · full-width section · add to the 'ERM Hub page' template so it is on every page">
+  <div class="wrap">
+    <div class="dot"><svg class="ic" viewBox="0 0 24 24"><path d="M12 11v6M12 7.5v.5"/></svg></div>
+    <p>This hub provides <b>interim ERM working guidance</b> to support consistent risk management across the company while the formal ERM Policy and Framework are under development/approval. <b>Final approved documents will supersede any interim guidance published here.</b></p>
+    <div class="yr">YEAR<br>2026</div>
+  </div>
+</div>
+
+<main><div class="wrap" id="app"></div></main>
+
+<section class="values wp" data-wp="Text + Image web parts · 5-column section · same on every page">
+  <div class="wrap">
+    <div class="v"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>Your awareness<br>reduces risk.</div>
+    <div class="v"><svg class="ic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6"/><path d="M15 14.5c3 0 6 2 6 5.5"/></svg>Your actions<br>drive transformation.</div>
+    <div class="mid">TOGETHER, WE MANAGE RISK.<div>TOGETHER, WE TRANSFORM.</div></div>
+    <div class="v"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>Better decisions.<br>Better future.</div>
+    <div class="v"><svg class="ic" viewBox="0 0 24 24"><path d="M12 20l-8-8a4.5 4.5 0 0 1 8-4 4.5 4.5 0 0 1 8 4z"/></svg>One company.<br>One team.</div>
+  </div>
+</section>
+<footer class="foot"><div class="wrap">
+  <span>Site owner: ERM Team · Content reviewed quarterly · Page last reviewed: 22 Oct 2026</span>
+  <span><a href="#metrics">Hub performance</a> · <a href="#build">Build guide</a> · <a href="#escalation">Report outdated content</a></span>
+</div></footer>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- icons ---------- */
+const I={
+ edit:'<path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4"/><path d="M9 17l1-3 5-5 2 2-5 5z"/>',
+ file:'<path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4"/><path d="M9 12h6M9 16h6"/>',
+ bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>',
+ cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01"/>',
+ alert:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',
+ head:'<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1"/><rect x="17" y="14" width="4" height="6" rx="1"/>',
+ home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/>',
+ people:'<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6"/><path d="M15 14.5c3 0 6 2 6 5.5"/>',
+ book:'<path d="M3 5c3-1.5 6-1.5 9 0v15c-3-1.5-6-1.5-9 0z"/><path d="M21 5c-3-1.5-6-1.5-9 0v15c3-1.5 6-1.5 9 0z"/>',
+ chat:'<path d="M4 4h16v12H9l-5 4z"/>',
+ mega:'<path d="M3 10v4h4l7 4V6L7 10z"/><path d="M17 9a4 4 0 0 1 0 6"/>',
+ chart:'<path d="M4 20V4M4 20h16"/><path d="M8 16v-4M12 16V8M16 16v-6"/>',
+ gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',
+ growth:'<path d="M3 20l6-6 4 4 8-9"/><path d="M15 9h6v6"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>',
+ arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+ check:'<path d="M5 12l5 5L20 7"/>',
+ down:'<path d="M12 4v12M6 11l6 6 6-6M4 20h16"/>',
+ video:'<rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3"/>'
+};
+const ic=(n,s='')=>`<svg class="ic" viewBox="0 0 24 24" ${s}>${I[n]}</svg>`;
+const wp=(note,html,cls='')=>`<section class="wp ${cls}" data-wp="${note}">${html}</section>`;
+const fmt=d=>new Date(d+'T00:00').toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+
+/* ---------- sample content (replace with real content) ---------- */
+const DOCS=[
+ {t:'Interim Risk Register Template',c:'Templates',x:'xlsx',v:'1.1',s:'wg',o:'ERM Team',u:'2026-10-15',r:'2027-01-15'},
+ {t:'Risk Register Template',c:'Templates',x:'xlsx',v:'1.0',s:'sp',o:'ERM Team',u:'2026-03-02',r:'—'},
+ {t:'Risk Register Guidance – Step by Step',c:'Guidance',x:'pdf',v:'1.0',s:'wg',o:'ERM Team',u:'2026-10-15',r:'2027-01-15'},
+ {t:'Interim Risk Assessment Matrix (5×5)',c:'Guidance',x:'pdf',v:'1.0',s:'wg',o:'ERM Team',u:'2026-09-28',r:'2026-12-28'},
+ {t:'Good vs Poor Risk Examples Pack',c:'Examples',x:'pptx',v:'1.0',s:'wg',o:'ERM Team',u:'2026-10-10',r:'2027-01-10'},
+ {t:'Risk Register Submission Checklist',c:'Checklists',x:'docx',v:'1.0',s:'wg',o:'ERM Team',u:'2026-10-18',r:'2027-01-18'},
+ {t:'Quarterly Risk Reporting Pack Template',c:'Reporting',x:'pptx',v:'1.2',s:'wg',o:'ERM Team',u:'2026-09-20',r:'2026-12-20'},
+ {t:'Top Risk Report Template',c:'Reporting',x:'docx',v:'1.0',s:'wg',o:'ERM Team',u:'2026-09-20',r:'2026-12-20'},
+ {t:'Risk Escalation Guide',c:'Escalation',x:'pdf',v:'1.0',s:'wg',o:'Lead ERM',u:'2026-10-05',r:'2027-01-05'},
+ {t:'Risk Champion Role Profile',c:'Risk Champions',x:'docx',v:'1.0',s:'wg',o:'Lead ERM',u:'2026-08-30',r:'2026-11-30'},
+ {t:'Risk Champion Onboarding Pack',c:'Risk Champions',x:'pptx',v:'1.0',s:'wg',o:'ERM Team',u:'2026-10-01',r:'2027-01-01'},
+ {t:'ERM Awareness Presentation',c:'Training',x:'pptx',v:'2.0',s:'wg',o:'ERM Team',u:'2026-09-15',r:'2026-12-15'},
+ {t:'ERM Training Plan 2026–27',c:'Training',x:'xlsx',v:'1.0',s:'wg',o:'ERM Team',u:'2026-09-10',r:'2026-12-10'},
+ {t:'ERM Communication Plan 2026–27',c:'Communication',x:'docx',v:'1.0',s:'wg',o:'ERM Team',u:'2026-09-10',r:'2026-12-10'},
+ {t:'Risk Statement Writing – 5-minute video',c:'Training',x:'mp4',v:'1.0',s:'wg',o:'ERM Team',u:'2026-10-12',r:'2027-04-12'}
+];
+const STATUS={wg:['st-wg','Working Guidance'],ap:['st-ap','Approved'],sp:['st-sp','Superseded']};
+const chip=s=>`<span class="chip ${STATUS[s][0]}">${STATUS[s][1]}</span>`;
+const DEADLINES=[
+ {d:'2026-11-05',t:'Risk Champion Clinic',s:'Drop-in support for Q4 register updates'},
+ {d:'2026-12-15',t:'Q4 Risk Register Submission',s:'Submit updated departmental risk registers'},
+ {d:'2026-12-22',t:'Top Risk Report Submission',s:'Top 10 risks and action updates'},
+ {d:'2027-01-14',t:'Q4 Risk Review Meeting',s:'Conduct and document risk review'},
+ {d:'2027-03-15',t:'Q1 2027 Risk Register Submission',s:'Quarterly register update'},
+ {d:'2027-03-22',t:'Q1 Top Risk Report Submission',s:'Top 10 risks and action updates'}
+];
+const NEWS=[
+ {i:'file',t:'Interim Risk Register Template v1.1',s:'Published 15 Oct 2026 – replaces v1.0'},
+ {i:'edit',t:'Submission checklist now available',s:'Check your register before you submit'},
+ {i:'people',t:'Hub pilot: Risk Champions invited',s:'Pilot runs 12–25 Nov 2026. Tell us what works.'},
+ {i:'bulb',t:'Risk Champion Clinic – November',s:'5 Nov 2026 · register on the Training page'}
+];
+const FAQ=[
+ {c:'Using the hub',q:'What is the difference between "Working Guidance" and "Approved"?',a:'Working Guidance is interim material from the ERM Team to keep practice consistent while the ERM Policy and Framework are being approved. Approved documents have completed formal governance. When an approved document is published, the interim version it replaces is marked <b>Superseded</b> and moved out of the main view.'},
+ {c:'Risk register',q:'Which risk register template should I use?',a:'Always download the template from <a href="#templates">Templates &amp; Forms</a>. The current version is <b>Interim Risk Register Template v1.1</b>. Do not reuse a copy saved from email; older versions are marked Superseded.'},
+ {c:'Risk register',q:'How do I write a good risk statement?',a:'Use cause → event → consequence: <i>"Due to [cause], there is a risk that [event], resulting in [consequence]."</i> Try the risk statement builder on <a href="#register">Risk Register Support</a>.'},
+ {c:'Risk register',q:'How do I rate likelihood and impact?',a:'Use the Interim Risk Assessment Matrix (5×5). Rate the inherent risk first (before controls), then the residual risk (after existing controls are taken into account).'},
+ {c:'Reporting',q:'When is the next submission deadline?',a:'See <a href="#reporting">Reporting</a> for the full calendar. The next Q4 Risk Register Submission is due <b>15 Dec 2026</b>.'},
+ {c:'Risk Champions',q:'Who is my Risk Champion?',a:'Look up your department in <a href="#champions">Risk Champion Corner</a>. Your Risk Champion is your first point of contact for register questions.'},
+ {c:'Escalation',q:'When should I escalate a risk?',a:'Escalate when a residual rating is High or Critical, a key control has failed, a new emerging risk could affect company objectives, or a risk is outside your authority to treat. Follow the steps in <a href="#escalation">Escalation &amp; Support</a>.'},
+ {c:'Using the hub',q:'I found an outdated or incorrect document. What do I do?',a:'Submit an <a href="#escalation">ERM request</a> with type "Hub feedback" and the document name. The content owner will review it within the agreed review cycle.'},
+ {c:'Using the hub',q:'Why can\'t I find a document that was shared by email?',a:'The hub only shows controlled, current versions. If a document you need is missing, raise a request and the ERM Team will add it or point you to the replacement.'},
+ {c:'Training',q:'Is there training on ERM basics?',a:'Yes. See <a href="#training">Training &amp; Awareness</a> for e-learning, short videos, job aids and upcoming sessions.'}
+];
+const EXAMPLES=[
+ {p:'Cyber attack.',g:'Due to unpatched operational technology (OT) systems, there is a risk that an unauthorised party gains access to network control systems, resulting in supply interruption to customers and regulatory penalties.',w:'The poor version names an event only. The good version gives the cause (which can be controlled), the event and the consequence (which shows the impact).'},
+ {p:'Budget overrun.',g:'Due to delays in capital project approvals, there is a risk that critical network reinforcement is not completed before summer peak demand, resulting in overloads and customer outages.',w:'"Budget overrun" is a consequence, not a risk. The good version links the risk to a business objective and a timeframe.'},
+ {p:'Staff shortage in field teams.',g:'Due to planned retirements of senior field engineers without succession plans, there is a risk of loss of critical technical knowledge, resulting in longer fault restoration times.',w:'The good version is specific enough to assign an owner and treatment actions (for example, a succession and knowledge-transfer plan).'}
+];
+const CHECKS=['I used the current template (Interim Risk Register Template v1.1)','Each risk statement follows cause → event → consequence','Each risk has a named risk owner (a person or role, not a department)','Inherent and residual ratings use the Interim 5×5 matrix','Existing controls are described and their effectiveness is rated','Every treatment action has an action owner and a due date','Each risk is linked to a departmental or company objective','My Risk Champion has reviewed the register','The file is named DEPT_RiskRegister_Q4-2026_v1'];
+const DEPTS=['Asset Management','Network Operations','Customer Services','HSE','Finance','Human Capital','IT / OT','Procurement & Contracts','Strategy & Transformation','Legal & Compliance'];
+
+/* ---------- pages ---------- */
+const NAV=[['home','',''],['start','Start Here'],['register','Risk Register Support'],['templates','Templates & Forms'],['reporting','Reporting'],['champions','Risk Champion Corner'],['escalation','Escalation & Support'],['training','Training & Awareness'],['faqs','FAQs']];
+const title=k=>(NAV.find(n=>n[0]===k)||[,{metrics:'Hub Performance',build:'Build Guide',search:'Search'}[k]])[1];
+const head=(k,p)=>`<div class="crumb"><a href="#home">Home</a> › ${title(k)}</div><div class="ph"><h2>${title(k)}</h2><p>${p}</p></div>`;
+const feedback=()=>wp('Microsoft Forms web part (1 question) → \'Hub Feedback\' list',`<div class="fb"><b>Did you find what you needed?</b><button class="btn ghost" onclick="fb(1)">Yes</button><button class="btn ghost" onclick="fb(0)">No</button><span class="muted sm">Your answer helps us improve the hub.</span></div>`);
+
+const P={};
+
+P.home=()=>`
+${wp('Section with background · Text web part + Image web part (banner) · Search uses the SharePoint site search box',`
+<div class="hero">
+  <div class="txt">
+    <h2>One place for everything ERM</h2>
+    <p>Find guidance, templates, examples, training and support to manage risk better, together.</p>
+    <form class="searchbox" onsubmit="go('search',this.q.value);return false"><input name="q" placeholder="Search ERM documents, templates, FAQs…" aria-label="Search"><button aria-label="Search">${ic('arrow')}</button></form>
+  </div>
+  <div class="art">${heroArt()}</div>
+  <div class="pillars">
+    <h4>TRANSFORMATION</h4>
+    <p>Better Risk Management.<br>Stronger Decisions.<br>Sustainable Future.</p>
+    <ul><li>${ic('people')}People First</li><li>${ic('gear')}Process Excellence</li><li>${ic('chart')}Data Driven</li><li>${ic('growth')}Sustainable Growth</li></ul>
+  </div>
+</div>`)}
+<h3 style="margin:22px 0 10px;color:var(--navy);letter-spacing:.4px;font-size:16px">QUICK ACCESS</h3>
+${wp('Quick links web part · Tiles layout · 6 links, each one click to its page',`<div class="qa">
+ ${tile('register','#0c2b55','edit','I need to complete a risk register','Step-by-step guidance to identify, assess and treat risks.')}
+ ${tile('templates','#5aa332','file','I need the latest template','Download the most current templates and forms.')}
+ ${tile('examples','#0f8590','bulb','I need examples of good risks','View good and poor examples with explanations.')}
+ ${tile('reporting','#6b4fa0','cal','I need reporting deadlines','Check the reporting calendar and submission dates.')}
+ ${tile('escalation','#e2700f','alert','I need to escalate a risk','Follow escalation guidance and notify the right people.')}
+ ${tile('request','#13797f','head','I need to ask ERM','Contact the ERM team or raise a support request.')}
+</div>`)}
+<div class="grid g5 mt">
+ ${wp('News web part · source: this site · List layout',`<div class="card" style="height:100%"><h3>What's new <a href="#home">View all</a></h3>${NEWS.map(n=>`<div class="li">${ic(n.i)}<div><b>${n.t}</b><small>${n.s}</small></div></div>`).join('')}</div>`)}
+ ${wp('Events web part · source: \'ERM Reporting Calendar\' · next 3',`<div class="card" style="height:100%"><h3>Upcoming deadlines <a href="#reporting">View calendar</a></h3>${DEADLINES.slice(1,4).map(dateRow).join('')}<div style="margin-top:10px"><a href="#reporting">See full reporting calendar ›</a></div></div>`)}
+ ${wp('Image web part (wheel graphic) + Text web part',`<div class="card" style="height:100%"><h3>Transformation <a href="#start">View plan</a></h3><div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">${wheel()}<ul class="sm" style="margin:0;padding-left:18px;flex:1;min-width:140px"><li>Align ERM with strategic priorities</li><li>Build risk-aware culture</li><li>Improve transparency and decision making</li><li>Drive continuous improvement</li></ul></div></div>`)}
+ ${wp('Quick links web part · List layout',`<div class="card" style="height:100%"><h3>Communication plan <a href="#training">View plan</a></h3>${[['mega','Key messages','What we communicate and why'],['chat','Communication channels','Where and how we share information'],['cal','Communication calendar','What, when and to whom']].map(x=>`<div class="li">${ic(x[0])}<div><b><a href="#training">${x[1]}</a></b><small>${x[2]}</small></div></div>`).join('')}</div>`)}
+ ${wp('Quick links web part · List layout',`<div class="card" style="height:100%"><h3>Training plan <a href="#training">View plan</a></h3>${[['cal','Training roadmap','Planned training for the year'],['book','Learning materials','Guides, videos and job aids'],['clock','Training schedule','Upcoming sessions and registration']].map(x=>`<div class="li">${ic(x[0])}<div><b><a href="#training">${x[1]}</a></b><small>${x[2]}</small></div></div>`).join('')}</div>`)}
+</div>`;
+
+function tile(page,color,icon,t,s,anchor){return `<a class="tile" href="#${page}"><div class="hd"><div class="sq" style="background:${color}">${ic(icon)}</div><b>${t}</b></div><span>${s}</span><div class="go">${ic('arrow')}</div></a>`}
+function dateRow(e){const d=new Date(e.d+'T00:00');return `<div class="li"><div class="date"><b>${d.getDate()}</b><br><small>${d.toLocaleString('en-GB',{month:'short'})}</small></div><div><b>${e.t}</b><small>${e.s}</small></div></div>`}
+function wheel(){const C=2*Math.PI*38,seg=C/4,cols=['#0c2b55','#6b4fa0','#0f8590','#5aa332'];return `<svg class="wheel" width="118" height="118" viewBox="0 0 100 100" role="img" aria-label="Transformation wheel">${cols.map((c,i)=>`<circle cx="50" cy="50" r="38" fill="none" stroke="${c}" stroke-width="18" stroke-dasharray="${seg-2} ${C-seg+2}" stroke-dashoffset="${-i*seg}" transform="rotate(-90 50 50)"/>`).join('')}<circle cx="50" cy="50" r="27" fill="#fff"/><text x="50" y="55" text-anchor="middle" font-size="14" fill="#0c2b55">ERM</text></svg>`}
+function heroArt(){return `<svg viewBox="0 0 400 220" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3effb"/><stop offset="1" stop-color="#f4f9fe"/></linearGradient></defs>
+<rect width="400" height="220" fill="url(#sky)"/>
+<path d="M0 170 L60 95 L105 140 L150 80 L210 150 L260 110 L320 160 L400 120 L400 220 L0 220Z" fill="#c9dcef"/>
+<g fill="#a9c9ea">${[[150,70,22],[176,50,18],[198,85,16],[218,40,20],[242,65,16],[262,55,22],[288,80,16]].map(b=>`<rect x="${b[0]}" y="${b[1]}" width="${b[2]}" height="${200-b[1]}" rx="1"/>`).join('')}</g>
+<g stroke="#fff" stroke-width="2.4" stroke-linecap="round">${[40,78,112].map(x=>`<line x1="${x}" y1="200" x2="${x}" y2="${120+x/8}"/><path d="M${x} ${120+x/8} l-14 -10 M${x} ${120+x/8} l15 -8 M${x} ${120+x/8} l0 17" stroke-width="1.8"/>`).join('')}</g>
+<path d="M0 205 C90 170 170 190 240 175 S340 150 400 120 L400 220 L0 220Z" fill="#7cc04f"/>
+<path d="M0 214 C110 196 220 214 400 170 L400 220 L0 220Z" fill="#5aa332"/>
+<path d="M150 200 C240 190 300 160 350 70" fill="none" stroke="#3d8a1c" stroke-width="20" stroke-linecap="round"/>
+<path d="M326 72 L362 40 L372 88Z" fill="#3d8a1c"/>
+
+</svg>`}
+
+P.start=a=>`${head('start','New to ERM or to this hub? Start here. Everything on this site is reachable in two to three clicks from the home page.')}
+${wp('Text web part · 3 columns',`<div class="grid g3">${[['1','Understand the basics','Read the five-step ERM process below and the difference between working guidance and approved documents.'],['2','Get the right template','Always download from Templates & Forms. Never reuse a copy saved from email.'],['3','Ask your Risk Champion','Your Risk Champion is your first point of contact. The ERM Team supports when you need more help.']].map(x=>`<div class="card"><div class="step" style="border:0;padding:0"><div class="n">${x[0]}</div></div><b style="color:var(--navy)">${x[1]}</b><p class="sm muted" style="margin:6px 0 0">${x[2]}</p></div>`).join('')}</div>`)}
+<h3 class="mt" style="color:var(--navy)">The ERM process</h3>
+${wp('Quick links web part · Button layout (or Text web part with numbered headings)',`<div class="steps">${[['Identify','Describe the risk as cause → event → consequence.'],['Assess','Rate likelihood and impact with the interim 5×5 matrix.'],['Treat','Agree actions with owners and due dates.'],['Monitor','Review risks and controls at least quarterly.'],['Report','Submit to ERM by the reporting deadline.']].map((s,i)=>`<div class="step"><div class="n">${i+1}</div><b>${s[0]}</b><p>${s[1]}</p></div>`).join('')}</div>`)}
+<div class="grid g2 mt">
+${wp('Text web part · table',`<div class="card"><h3>Who does what</h3><table class="tbl"><tr><th>Role</th><th>Responsibility</th></tr>
+<tr><td><b>Risk Owner</b></td><td>Accountable for a risk, its controls and its treatment actions.</td></tr>
+<tr><td><b>Risk Champion</b></td><td>Supports their department to complete and review the risk register; first point of contact.</td></tr>
+<tr><td><b>Line Manager</b></td><td>Makes sure risks are discussed and escalated in time.</td></tr>
+<tr><td><b>ERM Team</b></td><td>Sets the working guidance, reviews submissions, consolidates reporting and maintains this hub.</td></tr></table></div>`)}
+${wp('Text web part',`<div class="card"><h3>How to read document status</h3>
+<div class="li">${chip('wg')}<div><small>Interim guidance from the ERM Team. Use it now. It will be replaced when formal governance is approved.</small></div></div>
+<div class="li">${chip('ap')}<div><small>Formally approved through ERM governance. Takes priority over any working guidance.</small></div></div>
+<div class="li">${chip('sp')}<div><small>Replaced by a newer document. Kept for record only and hidden from the main view.</small></div></div>
+<p class="sm muted" style="margin:10px 0 0">Every document shows its owner, version and next review date.</p></div>`)}
+</div>${feedback()}`;
+
+P.register=a=>`${head('register','Everything you need to complete and submit a good-quality risk register the first time.')}
+${wp('Text web part · numbered steps',`<div class="card"><h3>Step-by-step <a href="#templates">Get the template</a></h3><div class="steps" style="margin:0">${[['Download the current template','Interim Risk Register Template v1.1 from Templates & Forms.'],['Write each risk statement','Cause → event → consequence. Use the builder below.'],['Rate the risk','Inherent, then residual, using the interim 5×5 matrix.'],['Plan treatment','Each action needs an owner and a due date.'],['Check and submit','Run the checklist, get Risk Champion review, submit by the deadline.']].map((s,i)=>`<div class="step"><div class="n">${i+1}</div><b>${s[0]}</b><p>${s[1]}</p></div>`).join('')}</div></div>`)}
+<div class="grid g2 mt">
+${wp('Power Apps (optional) · or replace with a static example in a Text web part',`<div class="card"><h3>Risk statement builder</h3>
+<div class="field"><label for="rc">Due to… (cause)</label><input id="rc" placeholder="e.g. ageing 11kV switchgear" oninput="stmt()"></div>
+<div class="field"><label for="re">There is a risk that… (event)</label><input id="re" placeholder="e.g. equipment fails during peak load" oninput="stmt()"></div>
+<div class="field"><label for="rq">Resulting in… (consequence)</label><input id="rq" placeholder="e.g. prolonged customer outages and regulatory penalties" oninput="stmt()"></div>
+<div class="stmt" id="stmt"><span class="muted">Your risk statement will appear here.</span></div>
+<div style="margin-top:10px"><button class="btn ghost" onclick="copyStmt()">Copy statement</button></div></div>`,'custom')}
+${wp('Power Apps (optional) · or Text web part checklist + downloadable checklist document',`<div class="card"><h3>Pre-submission checklist</h3>
+<div id="checks">${CHECKS.map((c,i)=>`<label class="check"><input type="checkbox" onchange="prog()">${c}</label>`).join('')}</div>
+<div class="bar"><i id="pbar"></i></div><div class="sm" id="ptxt">0 of ${CHECKS.length} checks complete</div></div>`,'custom')}
+</div>
+<h3 class="mt" id="examples" style="color:var(--navy)">Good and poor risk examples</h3>
+${wp('Text web part · 2-column section, or Collapsible section',`<div class="card">${EXAMPLES.map(e=>`<div class="ex"><div class="poor"><small>Poor</small>${e.p}</div><div class="good"><small>Good</small>${e.g}</div><div class="why"><b>Why:</b> ${e.w}</div></div>`).join('')}<a href="#templates">Download the full Good vs Poor Risk Examples Pack ›</a></div>`)}
+${feedback()}`;
+
+P.templates=()=>`${head('templates','The only controlled source of current ERM templates, guidance and forms. Download from here, not from email.')}
+${wp('Document library web part · \'ERM Documents\' · view: Current (Status ≠ Superseded) · filter pane on Category',`<div class="card">
+<div class="toolbar"><form class="searchbox" onsubmit="return false"><input id="dq" placeholder="Filter documents" oninput="docs()"><button type="button">${ic('arrow')}</button></form>
+<label class="sm"><input type="checkbox" id="dsup" onchange="docs()"> Show superseded</label></div>
+<div class="pills" id="dcat"></div><div class="scroll"><table class="tbl" id="dtbl"></table></div></div>`)}
+${feedback()}`;
+
+P.reporting=()=>`${head('reporting','Key ERM reporting dates for the year. Dates below are sample dates until the approved reporting calendar is confirmed.')}
+<div class="grid g2">
+${wp('List web part · \'ERM Reporting Calendar\' · view: Upcoming',`<div class="card"><h3>Reporting calendar <a href="#" onclick="toast('In SharePoint: Events web part → Add to calendar (.ics)');return false">Add to Outlook</a></h3><div class="scroll"><table class="tbl"><tr><th>Date</th><th>Activity</th><th>Details</th></tr>${DEADLINES.map(e=>`<tr><td style="white-space:nowrap"><b>${fmt(e.d)}</b></td><td>${e.t}</td><td class="muted">${e.s}</td></tr>`).join('')}</table></div></div>`)}
+${wp('Text web part · 4 columns',`<div class="card"><h3>Quarterly reporting cycle</h3><div class="tl">
+<div><b>Weeks 1–6 of quarter</b><div class="sm muted">Departments update risks, controls and actions with their Risk Champion.</div></div>
+<div><b>Weeks 7–10</b><div class="sm muted">Risk Champion review. Use the pre-submission checklist.</div></div>
+<div class="now"><b>Week 11 · Register submission</b><div class="sm muted">Submit to ERM using the current template.</div></div>
+<div><b>Week 12 · Top risk report</b><div class="sm muted">ERM consolidates the top risks and reports to management.</div></div>
+<div><b>Following month · Risk review meeting</b><div class="sm muted">Discuss top risks, escalations and decisions.</div></div></div></div>`)}
+</div>
+<div class="grid g3 mt">${['Quarterly Risk Reporting Pack Template','Top Risk Report Template','Risk Register Submission Checklist'].map(t=>docCard(t)).join('')}</div>
+${feedback()}`;
+function docCard(t){const d=DOCS.find(x=>x.t===t);return wp('Highlighted content / File viewer web part',`<div class="card"><div style="display:flex;align-items:center;gap:6px"><span class="ext x-${d.x}">${d.x.toUpperCase()}</span><b style="color:var(--navy)">${d.t}</b></div><div class="sm muted" style="margin:8px 0">v${d.v} · Owner: ${d.o} · Review ${fmt(d.r)}</div>${chip(d.s)} <a class="sm" href="#" style="margin-left:8px" onclick="toast('Download: ${d.t}');return false">Download</a></div>`)}
+
+P.champions=()=>`${head('champions','Tools, guidance and support for Risk Champions, and a directory to find the Risk Champion for your department.')}
+${wp('People web part · one card per department (or List web part · \'Risk Champions\' list)',`<div class="card"><h3>Find your Risk Champion</h3><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px">${DEPTS.map(d=>`<div class="dept"><div class="av">${d.split(/[ &/]+/).filter(Boolean).map(w=>w[0]).slice(0,2).join('')}</div><div><b class="sm" style="color:var(--navy)">${d}</b><div class="sm muted">Champion: to be confirmed</div></div></div>`).join('')}</div></div>`)}
+<div class="grid g3 mt">
+${wp('Quick links web part · List layout',`<div class="card"><h3>Champion toolkit</h3>${['Risk Champion Role Profile','Risk Champion Onboarding Pack','Good vs Poor Risk Examples Pack','Risk Register Submission Checklist'].map(t=>{const d=DOCS.find(x=>x.t===t);return `<div class="li"><span class="ext x-${d.x}">${d.x.toUpperCase()}</span><div><b>${t}</b><small>v${d.v} · ${STATUS[d.s][1]}</small></div></div>`}).join('')}</div>`)}
+${wp('Events web part · category: Clinic',`<div class="card"><h3>Champion clinics</h3>${[{d:'2026-11-05',t:'Q4 register clinic',s:'Teams · 10:00–11:00'},{d:'2026-11-19',t:'Pilot feedback session',s:'Teams · 10:00–11:00'},{d:'2026-12-03',t:'Pre-submission review clinic',s:'Teams · 10:00–11:00'}].map(dateRow).join('')}</div>`)}
+${wp('Call to action web part → Risk Champions Teams channel',`<div class="card"><h3>Champion network</h3><p class="sm">Share questions and good practice with other Risk Champions in the Teams channel. Answers to repeated questions are added to the FAQs.</p><a class="btn" href="#" onclick="toast('Opens the Risk Champions Teams channel');return false">${ic('chat')} Open Teams channel</a></div>`)}
+</div>${feedback()}`;
+
+P.escalation=a=>`${head('escalation','When and how to escalate a risk, and how to get help from the ERM Team. Escalation steps are interim until the ERM Framework is approved.')}
+${wp('Text web part · 4 columns',`<div class="card"><h3>Escalate when…</h3><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">${[['alert','Residual rating is High or Critical'],['gear','A key control has failed or an incident has occurred'],['growth','A new or emerging risk could affect company objectives'],['people','Treatment is outside your authority or budget']].map(x=>`<div class="dept">${ic(x[0],'style="color:var(--orange);width:26px;height:26px"')}<span class="sm"><b>${x[1]}</b></span></div>`).join('')}</div></div>`)}
+<div class="grid g2 mt">
+${wp('Text web part · numbered list',`<div class="card"><h3>Escalation path</h3><div class="tl">
+<div><b>1. Tell your line manager and Risk Champion</b><div class="sm muted">Share the risk statement, current rating and what has changed.</div></div>
+<div><b>2. Notify the ERM Team</b><div class="sm muted">Use the request form (type: Escalation). Attach the updated register entry.</div></div>
+<div><b>3. ERM assesses and advises</b><div class="sm muted">ERM confirms the rating and agrees next steps with the risk owner.</div></div>
+<div><b>4. Report to management</b><div class="sm muted">ERM includes the risk in the next top risk report, or escalates sooner if urgent.</div></div></div>
+<a href="#templates">Download the Risk Escalation Guide ›</a></div>`)}
+${wp('Microsoft Forms web part, or list form on \'ERM Requests\' list + Power Automate notification to ERM mailbox',`<div class="card" id="request"><h3>Ask ERM: request form</h3><form onsubmit="submitReq(event)">
+<div class="field"><label for="f1">Request type</label><select id="f1" required><option value="">Choose…</option><option>Template or document</option><option>Guidance clarification</option><option>Risk register review</option><option>Escalation</option><option>Training</option><option>Hub feedback / outdated content</option><option>Other</option></select></div>
+<div class="field"><label for="f2">Department</label><select id="f2" required><option value="">Choose…</option>${DEPTS.map(d=>`<option>${d}</option>`).join('')}</select></div>
+<div class="field"><label for="f3">Describe your request</label><textarea id="f3" required placeholder="What do you need, and by when?"></textarea></div>
+<div class="field"><label for="f4">Urgency</label><select id="f4"><option>Normal (within 3 working days)</option><option>High (within 1 working day)</option></select></div>
+<label class="check" style="border:0"><input type="checkbox" required> I checked the FAQs and did not find an answer</label>
+<button class="btn green">Submit request</button></form></div>`)}
+</div>
+<div class="callout mt">${ic('head','style="width:34px;height:34px"')}<p><b>ERM Team</b><br>Shared mailbox: erm@[company-domain] · Requests are answered within 3 working days.</p><a class="btn" href="#faqs">Check the FAQs first</a></div>
+${feedback()}`;
+
+P.training=()=>`${head('training','ERM training roadmap, learning materials, upcoming sessions, and the ERM communication plan.')}
+<div class="grid g2">
+${wp('Text web part · or Image web part with roadmap graphic',`<div class="card"><h3>Training roadmap 2026–27</h3><div class="tl">
+<div class="now"><b>Q4 2026 · Foundations</b><div class="sm muted">ERM basics e-learning; Risk Champion onboarding; hub pilot.</div></div>
+<div><b>Q1 2027 · Risk registers in practice</b><div class="sm muted">Workshops on risk statements, ratings and controls.</div></div>
+<div><b>Q2 2027 · Risk-based decisions</b><div class="sm muted">Sessions for managers on risk appetite and escalation.</div></div>
+<div><b>Q3 2027 · Refresh and assess</b><div class="sm muted">Refresher modules; training effectiveness review.</div></div></div></div>`)}
+${wp('List web part · \'ERM Training Sessions\' · Register = link to Forms or Teams meeting',`<div class="card"><h3>Upcoming sessions</h3><div class="scroll"><table class="tbl"><tr><th>Date</th><th>Session</th><th></th></tr>
+${[['2026-11-05','Risk Champion Clinic – Q4 registers'],['2026-11-12','Hub pilot walkthrough (Risk Champions)'],['2026-11-26','Writing good risk statements (60 min)'],['2026-12-10','ERM basics for new joiners']].map(s=>`<tr><td style="white-space:nowrap">${fmt(s[0])}</td><td>${s[1]}</td><td><a href="#" onclick="toast('Registered: ${s[1]}');return false">Register</a></td></tr>`).join('')}</table></div></div>`)}
+</div>
+${wp('Quick links web part · Grid layout',`<div class="card mt"><h3>Learning materials</h3><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">${[['book','ERM basics guide','15-minute read'],['video','Risk statements in 5 minutes','Short video'],['file','Interim 5×5 matrix job aid','One-page reference'],['mega','ERM Awareness Presentation','Slides for team meetings']].map(x=>`<a class="dept" href="#templates" style="color:inherit">${ic(x[0],'style="color:var(--teal);width:26px;height:26px"')}<div><b class="sm" style="color:var(--navy)">${x[1]}</b><div class="sm muted">${x[2]}</div></div></a>`).join('')}</div></div>`)}
+<h3 class="mt" id="comm" style="color:var(--navy)">Communication plan</h3>
+${wp('Text web part · 3 columns',`<div class="grid g3">
+<div class="card"><h3>Key messages</h3><ul class="sm" style="margin:0;padding-left:18px"><li>Risk management is everyone's job.</li><li>Use the hub first: one place, current versions.</li><li>Escalate early. No surprises.</li></ul></div>
+<div class="card"><h3>Channels</h3><ul class="sm" style="margin:0;padding-left:18px"><li>This hub (news and documents)</li><li>Risk Champions Teams channel</li><li>Internal newsletter and town halls</li><li>Department meetings, led by Risk Champions</li></ul></div>
+<div class="card"><h3>Calendar</h3><ul class="sm" style="margin:0;padding-left:18px"><li><b>Nov 2026</b> Hub pilot with Risk Champions</li><li><b>Dec 2026</b> Hub launch to all staff</li><li><b>Quarterly</b> Reporting reminders, 2 weeks before deadline</li><li><b>Annual</b> ERM Awareness Week</li></ul></div></div>`)}
+${feedback()}`;
+
+P.faqs=()=>`${head('faqs','Quick answers to the questions the ERM Team is asked most often. New questions from requests are added here.')}
+${wp('Text web part with Collapsible sections (native) · or List web part on \'ERM FAQs\' list',`<div class="toolbar"><form class="searchbox" onsubmit="return false"><input id="fq" placeholder="Search FAQs" oninput="faqs()"><button type="button">${ic('arrow')}</button></form></div><div class="pills" id="fcat"></div><div id="flist"></div>`)}
+<div class="callout mt"><p><b>Can't find your answer?</b> Raise a request and the ERM Team will reply within 3 working days.</p><a class="btn" href="#request">Ask ERM</a></div>`;
+
+P.metrics=()=>`${head('metrics','Lean CHECK: the measures used to confirm the hub is working. Visible to the ERM Team and sponsor only.')}
+<p class="sm" style="background:var(--amberL);border:1px solid #f2d6a6;padding:8px 12px;border-radius:6px;margin:0 0 14px"><b>Plan only.</b> Baseline values are provisional estimates from the A3 workbook. No observed results yet. Replace with timed tests before and after the pilot.</p>
+${wp('Text web parts (KPI tiles) · or embed Excel / Power BI fed by the \'ERM Requests\' list',`<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">
+${[['Request submission time','10','5','min','Primary reference (PT2). Target −50%.'],['Time to find key guidance','10','5','min','Timed search test. Target −50%.'],['Repeated clarification requests','TBC','−30%','','Baseline from ERM Requests log (Pareto by type).'],['First-time acceptance of registers','TBC','↑','','Sample of submitted registers.']].map(k=>`<div class="card kpi"><div class="sm muted">${k[0]}</div><div class="big">${k[1]}<small> ${k[3]} baseline</small></div><div class="sm"><b>Target:</b> ${k[2]} ${k[3]}</div><div class="sm muted" style="margin-top:6px">${k[4]}</div></div>`).join('')}</div>`)}
+<div class="grid g2 mt">
+${wp('List web part · \'Hub Action Plan\' list (from A3 DO sheet)',`<div class="card"><h3>Implementation plan</h3><div class="scroll"><table class="tbl"><tr><th>Countermeasure</th><th>Dates</th><th>Status</th></tr>
+${[['Build hub structure, home page and navigation','22–28 Oct 2026','In progress'],['Upload and organise ERM resources','29 Oct – 4 Nov','Not started'],['Functional testing (links, access, request form)','5–11 Nov','Not started'],['Pilot with Risk Champions; fix priority issues','12–25 Nov','Not started']].map(r=>`<tr><td>${r[0]}</td><td style="white-space:nowrap">${r[1]}</td><td><span class="chip ${r[2]==='In progress'?'st-wg':'st-sp'}" style="text-decoration:none">${r[2]}</span></td></tr>`).join('')}</table></div></div>`)}
+${wp('Text web part · table',`<div class="card"><h3>Control plan</h3><div class="scroll"><table class="tbl"><tr><th>Control</th><th>Owner</th><th>Frequency</th></tr>
+<tr><td>Review every document by its review date</td><td>Content owner</td><td>Quarterly</td></tr>
+<tr><td>Mark replaced documents Superseded</td><td>ERM Team</td><td>On each publish</td></tr>
+<tr><td>Pareto of requests by type → new FAQs</td><td>Lead ERM</td><td>Monthly</td></tr>
+<tr><td>Review page feedback and broken links</td><td>ERM Team</td><td>Monthly</td></tr>
+<tr><td>Swap working guidance for approved governance</td><td>Lead ERM</td><td>On approval</td></tr></table></div></div>`)}
+</div>`;
+
+P.build=()=>`${head('build','How to turn this prototype into the SharePoint site. Turn on <b>Build notes</b> (top right) to see the web part for each block on every page.')}
+<div class="grid g2">
+<div class="card"><h3>Build steps</h3><div class="tl">
+<div class="now"><b>1. Create the site</b><div class="sm muted">Communication site, "Topic" template, name "ERM Knowledge Hub". Or run the provisioning script.</div></div>
+<div><b>2. Brand it</b><div class="sm muted">Settings → Change the look: custom theme (navy #0C2B55, green #6AB23E), header with logo, horizontal navigation, footer on.</div></div>
+<div><b>3. Create libraries and lists</b><div class="sm muted">ERM Documents (with metadata), Reporting Calendar, FAQs, Requests, Risk Champions, Training Sessions, Hub Feedback.</div></div>
+<div><b>4. Build the page template</b><div class="sm muted">One page with the working-guidance banner and footer values band. Save as page template "ERM Hub page".</div></div>
+<div><b>5. Create the 9 pages</b><div class="sm muted">From the template. Add web parts as shown in Build notes. Add to the navigation in the menu order.</div></div>
+<div><b>6. Request form + notification</b><div class="sm muted">Microsoft Forms or list form; Power Automate flow emails the ERM mailbox and logs the request.</div></div>
+<div><b>7. Permissions and pilot</b><div class="sm muted">Share with the Risk Champions group first (12–25 Nov), then all staff at launch.</div></div></div></div>
+<div class="card"><h3>Permissions</h3><table class="tbl"><tr><th>Group</th><th>Access</th></tr>
+<tr><td>ERM Team</td><td>Owners: full control, approve content</td></tr>
+<tr><td>Content owners</td><td>Members: edit ERM Documents</td></tr>
+<tr><td>Risk Champions</td><td>Visitors + contribute to Requests/Feedback</td></tr>
+<tr><td>All staff (at launch)</td><td>Visitors: read; submit requests</td></tr></table>
+<h3 class="mt">Document control settings</h3><ul class="sm" style="margin:0;padding-left:18px">
+<li>Versioning: major versions on; require check-out</li><li>Content approval on: drafts visible only to ERM Team</li>
+<li>Required columns: Category, Status, Version, Owner, Review Date</li><li>Default view filter: Status ≠ Superseded</li>
+<li>Power Automate: reminder to owner 14 days before Review Date</li></ul></div>
+</div>`;
+
+P.search=q=>{q=(q||'').trim();const L=q.toLowerCase();
+ const d=q?DOCS.filter(x=>x.s!=='sp'&&(x.t+' '+x.c).toLowerCase().includes(L)):[];
+ const f=q?FAQ.filter(x=>(x.q+' '+x.a).toLowerCase().includes(L)):[];
+ const pg=q?NAV.filter(n=>n[1]&&n[1].toLowerCase().includes(L)):[];
+ return `${head('search','Search documents, FAQs and pages. In SharePoint, the site search box covers all of these.')}
+ <form class="searchbox" onsubmit="go('search',this.q.value);return false" style="margin-bottom:18px"><input name="q" value="${q.replace(/"/g,'&quot;')}" placeholder="e.g. template, escalate, deadline" autofocus><button>${ic('arrow')}</button></form>
+ ${q?`<p class="muted sm">${d.length+f.length+pg.length} results for "<b>${q.replace(/</g,'&lt;')}</b>"</p>`:''}
+ ${pg.map(n=>`<div class="card" style="margin-bottom:8px"><b>Page:</b> <a href="#${n[0]}">${n[1]}</a></div>`).join('')}
+ ${d.map(x=>`<div class="card" style="margin-bottom:8px"><span class="ext x-${x.x}">${x.x.toUpperCase()}</span><b>${x.t}</b> <span class="sm muted">· ${x.c} · v${x.v}</span> ${chip(x.s)}</div>`).join('')}
+ ${f.map(x=>`<div class="card" style="margin-bottom:8px"><b>FAQ:</b> ${x.q}<div class="sm muted" style="margin-top:4px">${x.a}</div></div>`).join('')}
+ ${q&&!(d.length+f.length+pg.length)?`<div class="callout"><p>No results. Ask the ERM Team and we will add the answer to the FAQs.</p><a class="btn" href="#request">Ask ERM</a></div>`:''}`};
+
+/* ---------- interactions ---------- */
+let dCat='All',fCat='All';
+function docs(){const q=(document.getElementById('dq')||{}).value||'';const sup=document.getElementById('dsup').checked;
+ const cats=['All',...new Set(DOCS.map(d=>d.c))];
+ document.getElementById('dcat').innerHTML=cats.map(c=>`<button class="pill ${c===dCat?'on':''}" onclick="dCat='${c}';docs()">${c}</button>`).join('');
+ const rows=DOCS.filter(d=>(sup||d.s!=='sp')&&(dCat==='All'||d.c===dCat)&&d.t.toLowerCase().includes(q.toLowerCase()));
+ document.getElementById('dtbl').innerHTML=`<tr><th>Name</th><th>Category</th><th>Version</th><th>Status</th><th>Owner</th><th>Review date</th><th></th></tr>`+
+ (rows.length?rows.map(d=>`<tr><td><span class="ext x-${d.x}">${d.x.toUpperCase()}</span><b style="color:var(--navy)">${d.t}</b><div class="sm muted" style="margin-left:42px">Updated ${fmt(d.u)}</div></td><td>${d.c}</td><td>${d.v}</td><td>${chip(d.s)}</td><td>${d.o}</td><td style="white-space:nowrap">${d.r==='—'?'—':fmt(d.r)}</td><td><a href="#" title="Download" onclick="toast('Download: ${d.t}');return false">${ic('down')}</a></td></tr>`).join(''):`<tr><td colspan="7" class="muted">No documents match.</td></tr>`)}
+function faqs(){const q=(document.getElementById('fq').value||'').toLowerCase();const cats=['All',...new Set(FAQ.map(f=>f.c))];
+ document.getElementById('fcat').innerHTML=cats.map(c=>`<button class="pill ${c===fCat?'on':''}" onclick="fCat='${c}';faqs()">${c}</button>`).join('');
+ const r=FAQ.filter(f=>(fCat==='All'||f.c===fCat)&&(f.q+f.a).toLowerCase().includes(q));
+ document.getElementById('flist').innerHTML=r.length?r.map(f=>`<details class="faq"><summary>${f.q}</summary><div>${f.a}</div></details>`).join(''):'<p class="muted">No FAQs match. Try another word or ask ERM.</p>'}
+function stmt(){const v=id=>document.getElementById(id).value.trim();const c=v('rc'),e=v('re'),q=v('rq');
+ document.getElementById('stmt').innerHTML=(c||e||q)?`Due to <em>${esc(c)||'…'}</em>, there is a risk that <em>${esc(e)||'…'}</em>, resulting in <em>${esc(q)||'…'}</em>.`:'<span class="muted">Your risk statement will appear here.</span>'}
+function esc(s){return s.replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function copyStmt(){const t=document.getElementById('stmt').innerText;try{navigator.clipboard.writeText(t);toast('Risk statement copied')}catch(e){toast('Select the text to copy')}}
+function prog(){const b=[...document.querySelectorAll('#checks input')],n=b.filter(x=>x.checked).length;
+ document.getElementById('pbar').style.width=(n/b.length*100)+'%';
+ document.getElementById('ptxt').innerHTML=n===b.length?'<b style="color:var(--greenD)">Ready to submit.</b>':`${n} of ${b.length} checks complete`}
+let reqN=1;
+function submitReq(e){e.preventDefault();const ref='ERM-REQ-'+String(reqN++).padStart(4,'0');e.target.reset();toast(`Request ${ref} submitted. ERM will reply within 3 working days.`)}
+function fb(y){toast(y?'Thanks for your feedback!':'Thanks. Tell us what was missing using the request form.')}
+let tt;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(tt);tt=setTimeout(()=>t.style.display='none',2800)}
+let searchQ='';function go(p,q){searchQ=q||'';if(location.hash==='#'+p)render();else location.hash=p}
+
+/* ---------- router ---------- */
+const ALIAS={examples:['register','examples'],request:['escalation','request']};
+function render(){let p=location.hash.slice(1),a='';if(ALIAS[p]){a=ALIAS[p][1];p=ALIAS[p][0]}const page=P[p]?p:'home';if(page==='search')a=searchQ;
+ document.getElementById('nav').innerHTML=NAV.map(n=>`<a href="#${n[0]}" class="${n[0]===page?'on':''}">${n[0]==='home'?ic('home','aria-label="Home"'):n[1]}</a>`).join('');
+ document.getElementById('app').innerHTML=P[page](a);
+ if(page==='templates')docs(); if(page==='faqs')faqs();
+ const anchor=a&&document.getElementById(a); if(anchor&&page!=='search')setTimeout(()=>anchor.scrollIntoView({behavior:'smooth'}),30); else window.scrollTo(0,0);
+ document.title=(page==='home'?'':title(page)+' · ')+'ERM Knowledge Hub'}
+window.addEventListener('hashchange',render);
+document.getElementById('buildBtn').onclick=function(){const on=document.body.classList.toggle('build');this.setAttribute('aria-pressed',on)};
+render();
+</script>
+
+
+</body>
+</html>
